@@ -1,0 +1,1 @@
+STOPPED: bool = False
