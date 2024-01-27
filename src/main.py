@@ -25,6 +25,7 @@ def main():
         print("main node finished, sending done signals...")
         numio.send_done_signals()
     else:
+        print("found background node")
         wait_for_done = threading.Thread(target=slurm.work_done)
         wait_for_done.start()
         background_noise = threading.Thread(target=cpu_load.start)

@@ -1,52 +1,19 @@
-done
-found main node
-starting numio at $2024-01-27 15:48:20.041457
-numio run finished, output is: $Utilized backend:	POSIX
-Time taken:		0.909 s
-Mem used (lower bound):	0.01 MB
-Method for calculation:	Jacobi
-Lines:			16
-Perturbation function:	f(x,y) = 2 * pi^2 * sin(pi * x) * sin(pi * y)
-Number of iterations:	200
-Norm of error:		2.671716e-04
-
-Total write operations across all processes: 0
-Bytes written in total: 0 B
-Total throughput in writing: 0.00 B/s
-Time spent copying matrices (avg/process): 0.000 s
-
-Total read operations across all processes: 0
-Bytes read in total: 0 B
-Total throughput in reading: 0.00 B/s
-Average CPU/core usage per process: 17.20 %
-
-Matrix:
- 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000
- 0.0000 0.1640 0.2997 0.3493 0.4011 0.3836 0.2997 0.2371 0.0000
- 0.0000 0.2997 0.5476 0.6382 0.7328 0.7008 0.5476 0.4331 0.0000
- 0.0000 0.3493 0.6382 0.7437 0.8540 0.8167 0.6382 0.5047 0.0000
- 0.0000 0.4011 0.7328 0.8540 0.9807 0.9379 0.7328 0.5796 0.0000
- 0.0000 0.3836 0.7008 0.8167 0.9379 0.8969 0.7008 0.5543 0.0000
- 0.0000 0.2997 0.5476 0.6382 0.7328 0.7008 0.5476 0.4331 0.0000
- 0.0000 0.2371 0.4331 0.5047 0.5796 0.5543 0.4331 0.3426 0.0000
- 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000
-
-numio run finished at: 2024-01-27 15:48:23.618849
-main node finished, sending done signals...
-sending stop signal to node: $1
-sending stop signal to node: $2
-sending stop signal to node: $3
-sending stop signal to node: $4
-sending stop signal to node: $5
-sending stop signal to node: $6
-sending stop signal to node: $7
-sending stop signal to node: $8
-sending stop signal to node: $9
-done
-done
-done
-done
-done
-done
-done
-done
+found background node
+found background node
+found background node
+found background node
+found background node
+found background node
+found background node
+found background node
+found background node
+found background node
+found background node
+found background node
+found background node
+found background node
+found background node
+found background node
+found background node
+found background node
+found background node
