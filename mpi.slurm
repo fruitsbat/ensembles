@@ -1,6 +1,6 @@
 #!/bin/bash
 	
-#SBATCH --time=2
+#SBATCH --time=30
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=3
 #SBATCH --ntasks=3
