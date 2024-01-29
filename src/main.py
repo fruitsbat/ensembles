@@ -5,6 +5,7 @@ import threading
 import numio
 from mpi4py import MPI
 import daemon
+from datetime import datetime
 
 
 def main():
@@ -33,7 +34,7 @@ def main():
             sleep(1)
 
     log.write_histogram()
-    print(f"shutting down node {MPI.COMM_WORLD.Get_rank()}")
+    print(f"shutting down node {MPI.COMM_WORLD.Get_rank()} at {datetime.now()}")
 
 
 if __name__ == "__main__":
