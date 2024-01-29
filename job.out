@@ -1,14 +1,3 @@
-starting node 0
-found main node
-starting numio at $2024-01-29 13:01:17.960079
-numio run!
-idling instead of running numio
-numio run finished at: 2024-01-29 13:01:29.960184
-main node finished, sending done signals...
-sending stop signal to node: 1
-sending stop signal to node: 2
-sent all done signals
-shutting down node 0
 starting node 2
 found background node with rank: 2
 starting background daemon on node 2
@@ -16,6 +5,46 @@ listening for done signal on 2
 received done on node 2 ending process...
 done with running background daemon on node 2
 shutting down node 2
+starting node 0
+found main node
+starting numio at $2024-01-29 13:09:52.673546
+numio run!
+numio run finished, output is: $Utilized backend:	POSIX
+Time taken:		0.029 s
+Mem used (lower bound):	0.01 MB
+Method for calculation:	Jacobi
+Lines:			24
+Perturbation function:	f(x,y) = 2 * pi^2 * sin(pi * x) * sin(pi * y)
+Number of iterations:	2000
+Norm of error:		6.980005e-11
+
+Total write operations across all processes: 0
+Bytes written in total: 0 B
+Total throughput in writing: 0.00 B/s
+Time spent copying matrices (avg/process): 0.000 s
+
+Total read operations across all processes: 0
+Bytes read in total: 0 B
+Total throughput in reading: 0.00 B/s
+Average CPU/core usage per process: 86.21 %
+
+Matrix:
+ 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000
+ 0.0000 0.1590 0.2518 0.3543 0.3981 0.3907 0.3260 0.2073 0.0000
+ 0.0000 0.2518 0.3989 0.5612 0.6306 0.6188 0.5164 0.3284 0.0000
+ 0.0000 0.3543 0.5612 0.7896 0.8872 0.8707 0.7265 0.4620 0.0000
+ 0.0000 0.3981 0.6306 0.8872 0.9969 0.9783 0.8163 0.5192 0.0000
+ 0.0000 0.3907 0.6188 0.8707 0.9783 0.9601 0.8011 0.5095 0.0000
+ 0.0000 0.3260 0.5164 0.7265 0.8163 0.8011 0.6685 0.4251 0.0000
+ 0.0000 0.2073 0.3284 0.4620 0.5192 0.5095 0.4251 0.2704 0.0000
+ 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000
+
+numio run finished at: 2024-01-29 13:09:53.082792
+main node finished, sending done signals...
+sending stop signal to node: 1
+sending stop signal to node: 2
+sent all done signals
+shutting down node 0
 starting node 1
 found background node with rank: 1
 starting background daemon on node 1

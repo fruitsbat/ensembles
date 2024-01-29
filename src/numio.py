@@ -35,7 +35,7 @@ def numio_path() -> str:
 
 def run_numio() -> None:
     print("numio run!")
-    if bool(os.environ["ENSEMBLES_IDLE_ONLY"]):
+    if os.environ["ENSEMBLES_IDLE_ONLY"] == "True":
         print("idling instead of running numio")
         sleep(int(os.environ["ENSEMBLES_IDLE_ONLY_TIME"]))
         return
@@ -45,7 +45,7 @@ def run_numio() -> None:
             mpiexec_path(),
             numio_path(),
             "-m",
-            "iter=1,size=9,pert=1",
+            "iter=2000,size=24,pert=2",
         ],
         capture_output=True,
         text=True,
