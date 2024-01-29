@@ -1,2 +1,4 @@
 plots
 src/__pycache__
+job.err
+job.out

@@ -15,6 +15,7 @@ def slurm_localid() -> int:
 
 
 def work_done() -> None:
+    print(f"listening for done signal on {MPI.COMM_WORLD.Get_rank()}")
     comm = MPI.COMM_WORLD
     data = comm.recv(source=0, tag=200)
-    print(data)
+    print(f"received {data} on node {MPI.COMM_WORLD.Get_rank()} ending process...")

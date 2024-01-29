@@ -9,9 +9,11 @@ def send_done_signals():
     world_size = comm.Get_size()
 
     # tell all the background daemons to stop
-    for node in range(1, world_size - 1):
-        print(f"sending stop signal to node: ${node}")
+    for node in range(1, world_size):
+        print(f"sending stop signal to node: {node}")
         comm.send(obj="done", dest=node, tag=200)
+    
+    print("sent all done signals")
         
 
 
