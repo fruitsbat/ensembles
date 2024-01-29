@@ -1,19 +1,16 @@
-import daemon
 import slurm
-import multiprocessing
-import time
+import threading
+from mpi4py import MPI
 
-STOPPED: bool = False
+# run an appropriate calculation for the selected daemon
+def run_calculation_step():
+    pass
 
 def start() -> None:
-    pool = multiprocessing.Pool(processes=slurm.allocated_cpu_count())
-    for _ in range(slurm.allocated_cpu_count()):
-        pool.apply_async(calculations)
-    while not daemon.STOPPED:
-        time.sleep(1)
-    pool.close()
-
-
-def calculations() -> None:
-    while not daemon.STOPPED:
-        _ = 4 / 64
+    print(f"starting background daemon on node {MPI.COMM_WORLD.Get_rank()}")
+    # wait for done signal
+    wait_for_done = threading.Thread(target=slurm.work_done)
+    wait_for_done.start()
+    while wait_for_done.is_alive():
+        run_calculation_step()
+    print(f"done with running background daemon on node {MPI.COMM_WORLD.Get_rank()}")

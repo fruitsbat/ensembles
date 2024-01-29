@@ -1,29 +1,25 @@
-starting node 2
-found background node with rank: 2
-listening for done signal on 2
-starting node 1
-found background node with rank: 1
-listening for done signal on 1
-received done on node 1 ending process...
-shutting down node 1
-received done on node 2 ending process...
-shutting down node 2
 starting node 0
 found main node
-starting numio at $2024-01-29 12:32:50.496366
+starting numio at $2024-01-29 13:01:17.960079
 numio run!
 idling instead of running numio
-numio run finished at: 2024-01-29 12:33:02.496477
+numio run finished at: 2024-01-29 13:01:29.960184
 main node finished, sending done signals...
 sending stop signal to node: 1
 sending stop signal to node: 2
 sent all done signals
 shutting down node 0
-
-===================================================================================
-=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
-=   PID 405627 RUNNING AT west1
-=   EXIT CODE: 15
-=   CLEANING UP REMAINING PROCESSES
-=   YOU CAN IGNORE THE BELOW CLEANUP MESSAGES
-===================================================================================
+starting node 2
+found background node with rank: 2
+starting background daemon on node 2
+listening for done signal on 2
+received done on node 2 ending process...
+done with running background daemon on node 2
+shutting down node 2
+starting node 1
+found background node with rank: 1
+starting background daemon on node 1
+listening for done signal on 1
+received done on node 1 ending process...
+done with running background daemon on node 1
+shutting down node 1

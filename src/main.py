@@ -1,11 +1,10 @@
 from time import sleep
 from log import Log
-import cpu_load
 import schedule
 import threading
-import slurm
 import numio
 from mpi4py import MPI
+import daemon
 
 
 def main():
@@ -27,14 +26,12 @@ def main():
         numio.send_done_signals()
     else:
         print(f"found background node with rank: {MPI.COMM_WORLD.Get_rank()}")
-        wait_for_done = threading.Thread(target=slurm.work_done)
-        wait_for_done.start()
-        background_noise = threading.Thread(target=cpu_load.start)
+        background_noise = threading.Thread(target=daemon.start)
         background_noise.start()
-        while wait_for_done.is_alive():
+        while background_noise.is_alive():
             schedule.run_pending()
             sleep(1)
-    
+
     log.write_histogram()
     print(f"shutting down node {MPI.COMM_WORLD.Get_rank()}")
 

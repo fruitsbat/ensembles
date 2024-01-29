@@ -9,7 +9,7 @@
 #SBATCH --error=job.err
 export ENSEMBLES_MPIEXEC_PATH=mpiexec
 export ENSEMBLES_NUMIO_PATH=/home/oosting/IO-partdiff/numio-posix
-export ENSEMBLES_IDLE_ONLY=True
+export ENSEMBLES_IDLE_ONLY=False
 export ENSEMBLES_IDLE_ONLY_TIME=12
 export ENSEMBLES_BACKGROUND_PROCESS_LIST='["cpu", "network"]'
 mpiexec python src/main.py
