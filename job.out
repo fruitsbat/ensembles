@@ -1,53 +1,24 @@
+starting node 0
+found main node
+starting numio at $2024-01-29 14:02:35.938138
+numio run finished, output is: $
+numio run finished at: 2024-01-29 14:02:36.426826
+main node finished, sending done signals...
+sending stop signal to node: 1
+sending stop signal to node: 2
+sent all done signals
+shutting down node 0 at 2024-01-29 14:02:37.444173
 starting node 1
 found background node with rank: 1
 starting background daemon on node 1
 listening for done signal on 1
 received done on node 1 ending process...
 done with running background daemon on node 1
-shutting down node 1 at 2024-01-29 13:40:12.315108
+shutting down node 1 at 2024-01-29 14:02:38.351896
 starting node 2
 found background node with rank: 2
 starting background daemon on node 2
 listening for done signal on 2
 received done on node 2 ending process...
 done with running background daemon on node 2
-shutting down node 2 at 2024-01-29 13:40:12.328521
-starting node 0
-found main node
-starting numio at $2024-01-29 13:40:09.793099
-numio run finished, output is: $Utilized backend:	MPI Async
-Time taken:		0.978 s
-Mem used (lower bound):	0.10 MB
-Method for calculation:	Jacobi
-Lines:			64
-Perturbation function:	f(x,y) = 2 * pi^2 * sin(pi * x) * sin(pi * y)
-Number of iterations:	9000
-Norm of error:		1.710315e-08
-
-Total write operations across all processes: 0
-Bytes written in total: 0 B
-Total throughput in writing: 0.00 B/s
-Time spent copying matrices (avg/process): 0.000 s
-
-Total read operations across all processes: 0
-Bytes read in total: 0 B
-Total throughput in reading: 0.00 B/s
-Average CPU/core usage per process: 96.00 %
-
-Matrix:
- 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000
- 0.0000 0.1170 0.2199 0.2963 0.3369 0.3335 0.2874 0.2066 0.0000
- 0.0000 0.2199 0.4133 0.5568 0.6331 0.6268 0.5401 0.3882 0.0000
- 0.0000 0.2963 0.5568 0.7501 0.8530 0.8445 0.7276 0.5230 0.0000
- 0.0000 0.3369 0.6331 0.8530 0.9700 0.9603 0.8274 0.5947 0.0000
- 0.0000 0.3335 0.6268 0.8445 0.9603 0.9507 0.8191 0.5888 0.0000
- 0.0000 0.2874 0.5401 0.7276 0.8274 0.8191 0.7058 0.5073 0.0000
- 0.0000 0.2066 0.3882 0.5230 0.5947 0.5888 0.5073 0.3647 0.0000
- 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000 0.0000
-
-numio run finished at: 2024-01-29 13:40:11.145892
-main node finished, sending done signals...
-sending stop signal to node: 1
-sending stop signal to node: 2
-sent all done signals
-shutting down node 0 at 2024-01-29 13:40:12.358984
+shutting down node 2 at 2024-01-29 14:02:38.352482

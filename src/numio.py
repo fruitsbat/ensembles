@@ -44,7 +44,11 @@ def run_numio() -> None:
             mpiexec_path(),
             numio_path(),
             "-m",
-            "iter=9000,size=64,pert=2",
+            "iter=90000,size=500,pert=2",
+            "-w",
+            "freq=10,path=matrix.out",
+            "-r",
+            "freq=10,path=matrix.out"
         ],
         capture_output=True,
         text=True,
