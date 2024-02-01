@@ -10,6 +10,20 @@ import math
 from mpi4py import MPI
 
 
+# takes a list of floats and shows the difference for each
+# entry to the last one
+# used for logging io
+def to_differences(l: list[float]) -> list[float]:
+    new_list: list[float] = []
+    for index, item in enumerate(l):
+        if index == 0:
+            new_list.append(0)
+        else:
+            new_item: float = item - l[index - 1]
+            new_list.append(new_item)
+    return new_list
+
+
 class LogDataLists(NamedTuple):
     cpu: list[float] = []
     disk: list[float] = []
@@ -86,7 +100,9 @@ class Log:
         schedule.every(seconds_interval).seconds.do(self.log_current)
 
     def write_histogram(self) -> None:
-        fig, (percentage_plot, bytes_plot) = plt.subplots(nrows=2, sharex=True)
+        fig, (percentage_plot, disk_bytes_plot, network_bytes_plot) = plt.subplots(
+            nrows=3, sharex=True
+        )
         value_lists = self.value_lists()
         percentage_plot.plot(value_lists.timestamps, value_lists.cpu, label="cpu")
         percentage_plot.plot(value_lists.timestamps, value_lists.memory, label="memory")
@@ -112,19 +128,34 @@ class Log:
         percentage_plot.set_xticklabels(value_lists.time_labels)
         percentage_plot.legend()
 
-        bytes_plot.plot(
-            value_lists.timestamps, value_lists.disk_read, label="disk read"
+        disk_bytes_plot.plot(
+            value_lists.timestamps,
+            to_differences(value_lists.disk_read),
+            label="disk read",
         )
-        bytes_plot.plot(
-            value_lists.timestamps, value_lists.disk_write, label="disk write"
+        disk_bytes_plot.plot(
+            value_lists.timestamps,
+            to_differences(value_lists.disk_write),
+            label="disk write",
         )
-        bytes_plot.plot(value_lists.timestamps, value_lists.net_down, label="net down")
-        bytes_plot.plot(value_lists.timestamps, value_lists.net_up, label="net up")
-        bytes_plot.set_ylabel("megabytes")
+        disk_bytes_plot.set_ylabel("megabytes")
+        disk_bytes_plot.legend()
+
+        network_bytes_plot.plot(
+            value_lists.timestamps,
+            to_differences(value_lists.net_down),
+            label="net down",
+        )
+
+        network_bytes_plot.plot(
+            value_lists.timestamps, to_differences(value_lists.net_up), label="net up"
+        )
+        network_bytes_plot.set_ylabel("megabytes")
+        network_bytes_plot.legend()
+
         fig.autofmt_xdate()
         plt.title(
             f"usage over time for: job {MPI.COMM_WORLD.Get_rank()} on {platform.node()}"
         )
         plt.xlabel("time")
-        plt.legend()
         plt.savefig(f"plots/{datetime.now().isoformat()}-id{slurm.slurm_localid()}.pdf")
