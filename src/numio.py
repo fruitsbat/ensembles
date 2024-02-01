@@ -4,6 +4,7 @@ from time import sleep
 from mpi4py import MPI
 import subprocess
 
+
 def send_done_signals():
     comm = MPI.COMM_WORLD
     world_size = comm.Get_size()
@@ -12,9 +13,8 @@ def send_done_signals():
     for node in range(1, world_size):
         print(f"sending stop signal to node: {node}")
         comm.send(obj="done", dest=node, tag=200)
-    
+
     print("sent all done signals")
-        
 
 
 # this is the main job that controls the numio benchmark
@@ -29,6 +29,7 @@ def start() -> None:
 def mpiexec_path() -> str:
     return os.environ["ENSEMBLES_MPIEXEC_PATH"]
 
+
 def numio_path() -> str:
     return os.environ["ENSEMBLES_NUMIO_PATH"]
 
@@ -38,21 +39,21 @@ def run_numio() -> None:
         print("idling instead of running numio")
         sleep(int(os.environ["ENSEMBLES_IDLE_ONLY_TIME"]))
         return
-    
+
     output = subprocess.run(
         [
             mpiexec_path(),
             numio_path(),
             "-m",
-            "iter=9000,size=500,pert=2",
+            f"iter={os.environ['ENSEMBLES_ITERATIONS']},size={os.environ['ENSEMBLES_MATRIX_SIZE']},pert={os.environ['ENSEMBLES_PERT']}",
             "-w",
-            "freq=0,path=matrix.out",
+            f"freq={os.environ['ENSEMBLES_RW_FREQUENCY']},path={os.environ['ENSEMBLES_RW_PATH']}",
             "-r",
             # make sure this is one more than read
             # otherwise numio will break
-            "freq=0,path=matrix.out",
+            f"freq={int(os.environ['ENSEMBLES_RW_FREQUENCY']) + 1},path={os.environ['ENSEMBLES_RW_PATH']}",
             "-c",
-            "freq=0,size=200"
+            f"freq={os.environ['ENSEMBLES_FAKE_COM_FREQ']},size={os.environ['ENSEMBLES_FAKE_COM_SIZE']}",
         ],
         capture_output=True,
         text=True,
