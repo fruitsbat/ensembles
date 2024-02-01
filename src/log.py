@@ -8,6 +8,7 @@ import platform
 from typing import NamedTuple
 import math
 from mpi4py import MPI
+import os
 
 
 # takes a list of floats and shows the difference for each
@@ -158,4 +159,4 @@ class Log:
             f"usage over time for: job {MPI.COMM_WORLD.Get_rank()} on {platform.node()}"
         )
         plt.xlabel("time")
-        plt.savefig(f"plots/{datetime.now().isoformat()}-id{slurm.slurm_localid()}.pdf")
+        plt.savefig(f"{os.environ['ENSEMBLES_GRAPH_OUT_PATH']}/{datetime.now().isoformat()}-id{slurm.slurm_localid()}.{os.environ['ENSEMBLES_GRAPH_FILETYPE']}")

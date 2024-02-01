@@ -19,5 +19,7 @@ export ENSEMBLES_FAKE_COM_SIZE=200 # how much data to send during fake communica
 export ENSEMBLES_FAKE_COM_FREQ=64 # how often to write data using fake communication
 export ENSEMBLES_IDLE_ONLY=False # just sleep instead of running numio
 export ENSEMBLES_IDLE_ONLY_TIME=12 # when sleeping instead of running numio wait for x seconds
+export ENSEMBLES_GRAPH_OUT_PATH=plots # where to store the generated graphs
+export ENSEMBLES_GRAPH_FILETYPE=pdf # supported file extension for matplotlib
 export ENSEMBLES_BACKGROUND_PROCESS_LIST='["cpu", "network"]' # json list of background processes to run
 mpiexec python src/main.py # run the script
