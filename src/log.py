@@ -9,6 +9,7 @@ from typing import NamedTuple
 import math
 from mpi4py import MPI
 import os
+import daemon
 
 
 # takes a list of floats and shows the difference for each
@@ -157,6 +158,11 @@ class Log:
         fig.autofmt_xdate()
         plt.title(
             f"usage over time for: job {MPI.COMM_WORLD.Get_rank()} on {platform.node()}"
+            + ""
+            if MPI.COMM_WORLD.Get_rank() == 0
+            else f" daemon type: {daemon.get_daemon_node_type()}"
         )
         plt.xlabel("time")
-        plt.savefig(f"{os.environ['ENSEMBLES_GRAPH_OUT_PATH']}/{datetime.now().isoformat()}-id{slurm.slurm_localid()}.{os.environ['ENSEMBLES_GRAPH_FILETYPE']}")
+        plt.savefig(
+            f"{os.environ['ENSEMBLES_GRAPH_OUT_PATH']}/{datetime.now().isoformat()}-id{slurm.slurm_localid()}.{os.environ['ENSEMBLES_GRAPH_FILETYPE']}"
+        )
