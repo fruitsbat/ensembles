@@ -2,7 +2,7 @@ import os
 import psutil
 from mpi4py import MPI
 
-
+# check how many cpus we have for threading
 def allocated_cpu_count() -> int:
     try:
         return int(os.environ["SLURM_CPUS_PER_TASK"])

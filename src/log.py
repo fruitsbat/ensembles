@@ -157,10 +157,12 @@ class Log:
 
         fig.autofmt_xdate()
         plt.title(
-            f"usage over time for: job {MPI.COMM_WORLD.Get_rank()} on {platform.node()}"
-            + ""
-            if MPI.COMM_WORLD.Get_rank() == 0
-            else f" daemon type: {daemon.get_daemon_node_type()}"
+            (
+                f"numio job running on {platform.node()}"
+                if MPI.COMM_WORLD.Get_rank() == 0
+                else f"{daemon.get_daemon_node_type()} daemon running on {platform.node()}"
+            ),
+            wrap=True,
         )
         plt.xlabel("time")
         plt.savefig(
