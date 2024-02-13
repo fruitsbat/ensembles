@@ -1,9 +1,9 @@
 #!/bin/bash
 
-#SBATCH --time=30
-#SBATCH --nodes=1
-#SBATCH --ntasks-per-node=3
-#SBATCH --ntasks=3
+#SBATCH --time=3
+#SBATCH --nodes=2
+#SBATCH --ntasks-per-node=2
+#SBATCH --ntasks=4
 #SBATCH --partition=west
 #SBATCH --output=job.out
 #SBATCH --error=job.err
@@ -21,6 +21,6 @@ export ENSEMBLES_IDLE_ONLY=False # just sleep instead of running numio
 export ENSEMBLES_IDLE_ONLY_TIME=12 # when sleeping instead of running numio wait for x seconds
 export ENSEMBLES_GRAPH_OUT_PATH=plots # where to store the generated graphs (make sure the folder exists)
 export ENSEMBLES_GRAPH_FILETYPE=pdf # supported file extension for matplotlib
-export ENSEMBLES_BACKGROUND_PROCESS_LIST='["cpu", "idle"]' # json list of background processes to run
+export ENSEMBLES_BACKGROUND_PROCESS_LIST='["idle", "idle", "idle"]' # json list of background processes to run
 
 mpiexec python src/main.py # run the script

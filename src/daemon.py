@@ -6,39 +6,60 @@ import json
 import os
 from time import sleep
 import typing
+from datetime import datetime
+import psutil
 
-done: bool = False
 
 # runs a function on all available cores using threading
 def all_cores(f: typing.Callable[..., None]) -> None:
     cpu_count: int = slurm.allocated_cpu_count()
+    print(f"running {f} on {cpu_count}/{psutil.cpu_count()} cores")
     for _ in range(0, cpu_count):
         runner = threading.Thread(target=f)
         runner.start()
 
-def idle_daemon() -> None:
-    while not done:
-        sleep(5)
-
-# doing a bunch of calculations to stress the cpu
-def cpu_daemon() -> None:
-    while not done:
-        _ = 4 / 64
 
 class DaemonType(Enum):
     CPU = "cpu"
     IDLE = "idle"
 
-    # run an appropriate calculation for the selected daemon
-    # this function must listen to the done variable above
-    # in order to stop when numio is terminated
-    def run_function(self) -> None:
-        match self:
-            case DaemonType.CPU:
-                all_cores(cpu_daemon)
-            case DaemonType.IDLE:
-                idle_daemon()
 
+class Daemon:
+    daemon: DaemonType
+    done: bool
+
+    def __init__(self) -> None:
+        self.daemon = get_daemon_node_type()
+        self.done = False
+        print(f"got {self.daemon} on node {MPI.COMM_WORLD.Get_rank()}")
+
+    def cpu_daemon(self):
+        while not self.done:
+            print("cpu attack")
+            _ = 64 / 128
+
+    def idle_daemon(self):
+        while not self.done:
+            print("awawawa")
+            sleep(1)
+
+    # run appropritate function for the current daemon
+    def run_function(self) -> None:
+        match self.daemon:
+            case DaemonType.CPU:
+                all_cores(self.cpu_daemon)
+            case DaemonType.IDLE:
+                self.idle_daemon()
+
+    def run(self) -> None:
+        print(f"{self.daemon} on node {MPI.COMM_WORLD} started running")
+        thread = threading.Thread(target=self.run_function)
+        thread.start()
+        # wait for the main node to be done
+        slurm.work_done()
+        # then exit
+        self.done = True
+        print("daemon finishing run")
 
 
 # what type of daemon is this node?
@@ -50,11 +71,10 @@ def get_daemon_node_type() -> DaemonType:
     return daemon_list[(noderank - 1) % len(daemon_list)]
 
 
-
 def start() -> None:
-    print(f"starting background daemon on node {MPI.COMM_WORLD.Get_rank()}")
-    daemon_task = threading.Thread(target=get_daemon_node_type().run_function)
-    daemon_task.start()
-
-    slurm.work_done()
+    print(
+        f"starting background daemon on node {MPI.COMM_WORLD.Get_rank()} at {datetime.now()}"
+    )
+    daemon = Daemon()
+    daemon.run()
     print(f"done with running background daemon on node {MPI.COMM_WORLD.Get_rank()}")

@@ -9,7 +9,7 @@ from datetime import datetime
 
 
 def main():
-    print(f"starting node {MPI.COMM_WORLD.Get_rank()}")
+    print(f"starting node {MPI.COMM_WORLD.Get_rank()} at {datetime.now()}")
     # start logging data about the current node
     log = Log()
     log.schedule()

@@ -2,6 +2,7 @@ import os
 import psutil
 from mpi4py import MPI
 
+
 # check how many cpus we have for threading
 def allocated_cpu_count() -> int:
     try:
@@ -17,5 +18,7 @@ def slurm_localid() -> int:
 def work_done() -> None:
     print(f"listening for done signal on {MPI.COMM_WORLD.Get_rank()}")
     comm = MPI.COMM_WORLD
-    data = comm.recv(source=0, tag=200)
+    data: str = ""
+    while data != "done":
+        data = comm.recv(source=0, tag=200)
     print(f"received {data} on node {MPI.COMM_WORLD.Get_rank()} ending process...")
