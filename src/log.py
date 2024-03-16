@@ -180,8 +180,11 @@ class Log:
 
     # write out the collected data as json
     def write_json(self) -> None:
+        job_type = (
+            "numio" if MPI.COMM_WORLD.Get_rank() == 0 else daemon.get_daemon_node_type()
+        )
         jsonified_list_data = jsonpickle.encode(self.entries)  # type: ignore
-        json_string = f"time_started: {self.beginning_timestamp}, job_type: {daemon.get_daemon_node_type()}, entries: {jsonified_list_data}"
+        json_string = f'{"{"}"time_started": {self.beginning_timestamp}, "job_type": "{job_type}", "entries": {jsonified_list_data} {"}"}'
         with open(
             f"{os.environ['ENSEBLES_DATA_OUT_PATH']}/{datetime.now().isoformat()}-id{slurm.slurm_localid()}.json",
             "x",
