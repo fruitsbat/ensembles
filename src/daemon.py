@@ -12,7 +12,7 @@ import psutil
 done: bool = False
 
 
-# runs a function on all available cores using threading
+# spawns a thread for each available core
 def all_cores(f: typing.Callable[..., None]) -> None:
     cpu_count: int = slurm.allocated_cpu_count()
     print(f"running {f} on {cpu_count}/{psutil.cpu_count()} cores")
@@ -43,7 +43,6 @@ def cpu() -> None:
 def idle() -> None:
     global done
     while not done:
-        print("zzzzzzz")
         sleep(1)
 
 

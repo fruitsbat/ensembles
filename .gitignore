@@ -1,4 +1,5 @@
 plots
+data
 src/__pycache__
 job.err
 job.out

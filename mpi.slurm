@@ -1,9 +1,9 @@
 #!/bin/bash
 
 #SBATCH --time=120
-#SBATCH --nodes=4
+#SBATCH --nodes=2
 #SBATCH --ntasks-per-node=1
-#SBATCH --ntasks=4
+#SBATCH --ntasks=2
 #SBATCH --partition=west
 #SBATCH --output=job.out
 #SBATCH --error=job.err
@@ -20,7 +20,8 @@ export ENSEMBLES_FAKE_COM_FREQ=64 # how often to write data using fake communica
 export ENSEMBLES_IDLE_ONLY=False # just sleep instead of running numio
 export ENSEMBLES_IDLE_ONLY_TIME=12 # when sleeping instead of running numio wait for x seconds
 export ENSEMBLES_GRAPH_OUT_PATH=plots # where to store the generated graphs (make sure the folder exists)
+export ENSEBLES_DATA_OUT_PATH=data # where to store the generated log data (make sure the folder exists)
 export ENSEMBLES_GRAPH_FILETYPE=pdf # supported file extension for matplotlib
-export ENSEMBLES_BACKGROUND_PROCESS_LIST='["idle", "cpu"]' # json list of background processes to run
+export ENSEMBLES_BACKGROUND_PROCESS_LIST='["cpu", "cpu"]' # json list of background processes to run
 
 mpiexec python src/main.py # run the script

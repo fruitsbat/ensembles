@@ -33,7 +33,9 @@ def main():
             schedule.run_pending()
             sleep(1)
 
+    # write out collected data
     log.write_histogram()
+    log.write_json()
     print(f"shutting down node {MPI.COMM_WORLD.Get_rank()} at {datetime.now()}")
 
 

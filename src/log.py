@@ -9,6 +9,7 @@ from typing import NamedTuple
 import math
 from mpi4py import MPI
 import os
+import jsonpickle  # type: ignore
 import daemon
 
 
@@ -106,8 +107,16 @@ class Log:
             nrows=3, sharex=True
         )
         value_lists = self.value_lists()
-        percentage_plot.plot(value_lists.timestamps, value_lists.cpu, label="cpu")
-        percentage_plot.plot(value_lists.timestamps, value_lists.memory, label="memory")
+        percentage_plot.plot(
+            value_lists.timestamps,
+            value_lists.cpu,
+            label=f"cpu (total count: {psutil.cpu_count()})",
+        )
+        percentage_plot.plot(
+            value_lists.timestamps,
+            value_lists.memory,
+            label=f"memory (total: {psutil.virtual_memory().total >> 30} GB)",
+        )
         percentage_plot.set_ylim([0, 100])
         percentage_plot.yaxis.set(
             ticks=[
@@ -168,3 +177,13 @@ class Log:
         plt.savefig(
             f"{os.environ['ENSEMBLES_GRAPH_OUT_PATH']}/{datetime.now().isoformat()}-id{slurm.slurm_localid()}.{os.environ['ENSEMBLES_GRAPH_FILETYPE']}"
         )
+
+    # write out the collected data as json
+    def write_json(self) -> None:
+        jsonified_list_data = jsonpickle.encode(self.entries)  # type: ignore
+        json_string = f"time_started: {self.beginning_timestamp}, job_type: {daemon.get_daemon_node_type()}, entries: {jsonified_list_data}"
+        with open(
+            f"{os.environ['ENSEBLES_DATA_OUT_PATH']}/{datetime.now().isoformat()}-id{slurm.slurm_localid()}.json",
+            "x",
+        ) as file:
+            file.write(json_string)
