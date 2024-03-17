@@ -10,7 +10,7 @@
 
 export ENSEMBLES_MPIEXEC_PATH=mpiexec
 export ENSEMBLES_NUMIO_PATH=/home/oosting/IO-partdiff/numio-mpiasync
-export ENSEMBLES_ITERATIONS=24000 # count of numio iterations
+export ENSEMBLES_ITERATIONS=3000 # count of numio iterations
 export ENSEMBLES_MATRIX_SIZE=500 # how large the numio matrix should be
 export ENSEMBLES_PERT=2 # 1 if no perturbation function, 2 if one should be used
 export ENSEMBLES_RW_FREQUENCY=64 # which frequency to read and write with (read is frequency + 1 since numio will break otherwise)

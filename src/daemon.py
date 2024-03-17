@@ -9,18 +9,29 @@ from time import sleep
 import typing
 from datetime import datetime
 import psutil
+import multiprocessing
 
 done: bool = False
 
 
 # spawns a thread for each available core
+# def all_cores(f: typing.Callable[..., None]) -> None:
+#     cpu_count: int = slurm.allocated_cpu_count()
+#     print(f"running {f} on {cpu_count}/{psutil.cpu_count()} cores")
+#     for n in range(0, cpu_count):
+#         runner = threading.Thread(target=f)
+#         runner.start()
+#         print(f"started on core {n}")
+
+
 def all_cores(f: typing.Callable[..., None]) -> None:
     cpu_count: int = slurm.allocated_cpu_count()
+    jobs = []
     print(f"running {f} on {cpu_count}/{psutil.cpu_count()} cores")
-    for n in range(0, cpu_count):
-        runner = threading.Thread(target=f)
-        runner.start()
-        print(f"started on core {n}")
+    for _ in range(0, cpu_count):
+        process = multiprocessing.Process(target=f)
+        jobs.append(process)
+        process.start()
 
 
 class DaemonType(Enum):
@@ -33,7 +44,8 @@ class DaemonType(Enum):
 def cpu_step() -> None:
     global done
     while not done:
-        _ = 18783.83983 / 89374837.73
+        for _ in range(0, 500000):
+            _ = 4950495.304 / 938949384.32
 
 
 # cpu daemon
@@ -52,7 +64,7 @@ def ram() -> None:
     global done
     bytes = b""
     while not done:
-        random_bytes = random.randbytes(10000000)
+        random_bytes = random.randbytes(100000000)
         bytes = bytes + random_bytes
 
 
