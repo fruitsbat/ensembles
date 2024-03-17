@@ -1,4 +1,5 @@
 # import random
+import random
 import slurm
 import threading
 from mpi4py import MPI
@@ -35,7 +36,9 @@ def all_cores(f: typing.Callable[..., None]) -> None:
 class DaemonType(Enum):
     CPU = "cpu"
     IDLE = "idle"
-    # RAM = "ram"
+    RAM = "ram"
+    WALK = "walk"
+    MULTIWALK = "multiwalk"
 
 
 # partial function for the cpu daemon
@@ -50,6 +53,32 @@ def cpu() -> None:
     all_cores(cpu_step)
 
 
+# simulates grepping for a file by walking the filesystem
+def walk() -> None:
+    global done
+
+    results = []
+    while not done:
+        for _root, _dirs, files in os.walk("/"):
+            for name in files:
+                results.append(name)
+    print(f"walk daemon found: {results}")  # type: ignore
+
+
+def multiwalk_step() -> None:
+    results = []
+    while True:
+        for _root, _dirs, files in os.walk("/"):
+            for name in files:
+                if name == "hello_world.txt":
+                    results.append(name)
+
+
+# multithreaded version of the walk daemon
+def multiwalk() -> None:
+    all_cores(multiwalk_step)
+
+
 # idle daemon
 def idle() -> None:
     global done
@@ -57,32 +86,27 @@ def idle() -> None:
         sleep(1)
 
 
-# def ram() -> None:
-#     global done
+def ram() -> None:
+    global done
 
-#     used_ram: int = psutil.virtual_memory().used
-#     total_ram: int = psutil.virtual_memory().total
+    used_ram: int = psutil.virtual_memory().used
+    total_ram: int = psutil.virtual_memory().total
 
-#     bytes = b""
+    bytes = b""
 
-#     while not done:
-#         if used_ram / total_ram >= 0.95:
-#             random_bytes = random.randbytes(1000000)
-#             bytes = bytes + random_bytes
-#             used_ram = psutil.virtual_memory().used
+    while not done:
+        if used_ram / total_ram >= 0.95:
+            random_bytes = random.randbytes(1000000)
+            bytes = bytes + random_bytes
+            used_ram = psutil.virtual_memory().used
 
 
 # what type of daemon is this node?
 def get_daemon_node_type() -> DaemonType:
     noderank: int = MPI.COMM_WORLD.Get_rank()
     daemon_list: list[str] = json.loads(os.environ["ENSEMBLES_BACKGROUND_PROCESS_LIST"])
-    s = daemon_list[(noderank - 1) % len(daemon_list)]
-    if s == "cpu":
-        return DaemonType.CPU
-    # elif s == "ram":
-    #     return DaemonType.RAM
-    else:
-        return DaemonType.IDLE
+    name = daemon_list[(noderank - 1) % len(daemon_list)]
+    return DaemonType(name)
 
 
 # what function to run for the selected daemon
@@ -90,14 +114,15 @@ def function_for_daemon(daemon_type: DaemonType) -> typing.Callable[..., None]:
     print(f"selecting function for {daemon_type.value}")
     match daemon_type:
         case DaemonType.CPU:
-            print("selected cpu")
             return cpu
         case DaemonType.IDLE:
-            print("selected idle")
             return idle
-        # case DaemonType.RAM:
-        #     print("selected ram")
-        #     return ram
+        case DaemonType.RAM:
+            return ram
+        case DaemonType.WALK:
+            return walk
+        case DaemonType.MULTIWALK:
+            return multiwalk
 
 
 # run a function for the daemon type

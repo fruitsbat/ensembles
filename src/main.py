@@ -6,13 +6,14 @@ import numio
 from mpi4py import MPI
 import daemon
 from datetime import datetime
+import os
 
 
 def main():
     print(f"starting node {MPI.COMM_WORLD.Get_rank()} at {datetime.now()}")
     # start logging data about the current node
     log = Log()
-    log.schedule()
+    log.schedule(seconds_interval=int(os.environ["ENSEMBLES_LOG_EVERY_X_SECONDS"]))
 
     # check if this is the main job or a background daemon
     if MPI.COMM_WORLD.Get_rank() == 0:
