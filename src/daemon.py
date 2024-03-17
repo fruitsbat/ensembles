@@ -1,4 +1,4 @@
-import random
+# import random
 import slurm
 import threading
 from mpi4py import MPI
@@ -14,37 +14,34 @@ import multiprocessing
 done: bool = False
 
 
-# spawns a thread for each available core
-# def all_cores(f: typing.Callable[..., None]) -> None:
-#     cpu_count: int = slurm.allocated_cpu_count()
-#     print(f"running {f} on {cpu_count}/{psutil.cpu_count()} cores")
-#     for n in range(0, cpu_count):
-#         runner = threading.Thread(target=f)
-#         runner.start()
-#         print(f"started on core {n}")
-
-
+# run a process on all cores
+# this also kills processes once they are done
 def all_cores(f: typing.Callable[..., None]) -> None:
     cpu_count: int = slurm.allocated_cpu_count()
-    jobs = []
     print(f"running {f} on {cpu_count}/{psutil.cpu_count()} cores")
+    jobs = []
     for _ in range(0, cpu_count):
-        process = multiprocessing.Process(target=f)
+        process = multiprocessing.Process(target=f, daemon=True)
         jobs.append(process)
         process.start()
+
+    global done
+    while not done:
+        sleep(1)
+
+    print("finished running on all cores")
 
 
 class DaemonType(Enum):
     CPU = "cpu"
     IDLE = "idle"
-    RAM = "ram"
+    # RAM = "ram"
 
 
 # partial function for the cpu daemon
 def cpu_step() -> None:
-    global done
-    while not done:
-        for _ in range(0, 500000):
+    while True:
+        for _ in range(0, 100):
             _ = 4950495.304 / 938949384.32
 
 
@@ -60,12 +57,19 @@ def idle() -> None:
         sleep(1)
 
 
-def ram() -> None:
-    global done
-    bytes = b""
-    while not done:
-        random_bytes = random.randbytes(100000000)
-        bytes = bytes + random_bytes
+# def ram() -> None:
+#     global done
+
+#     used_ram: int = psutil.virtual_memory().used
+#     total_ram: int = psutil.virtual_memory().total
+
+#     bytes = b""
+
+#     while not done:
+#         if used_ram / total_ram >= 0.95:
+#             random_bytes = random.randbytes(1000000)
+#             bytes = bytes + random_bytes
+#             used_ram = psutil.virtual_memory().used
 
 
 # what type of daemon is this node?
@@ -75,8 +79,8 @@ def get_daemon_node_type() -> DaemonType:
     s = daemon_list[(noderank - 1) % len(daemon_list)]
     if s == "cpu":
         return DaemonType.CPU
-    elif s == "ram":
-        return DaemonType.RAM
+    # elif s == "ram":
+    #     return DaemonType.RAM
     else:
         return DaemonType.IDLE
 
@@ -91,9 +95,9 @@ def function_for_daemon(daemon_type: DaemonType) -> typing.Callable[..., None]:
         case DaemonType.IDLE:
             print("selected idle")
             return idle
-        case DaemonType.RAM:
-            print("selected ram")
-            return ram
+        # case DaemonType.RAM:
+        #     print("selected ram")
+        #     return ram
 
 
 # run a function for the daemon type
@@ -102,7 +106,7 @@ def run(daemon_type: DaemonType) -> None:
     print("starting daemon threads")
     f: typing.Callable[..., None] = function_for_daemon(daemon_type)
     print(f)
-    thread = threading.Thread(target=f)
+    thread = threading.Thread(target=f, daemon=True)
     thread.start()
     # block until thread is done
     slurm.work_done()

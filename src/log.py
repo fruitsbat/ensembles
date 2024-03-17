@@ -87,7 +87,7 @@ class Log:
             lists.cpu.append(entry.cpu_percent)
             lists.memory.append(entry.memory_percent)
             lists.timestamps.append(entry.timestamp)
-            dt = datetime.utcfromtimestamp(entry.timestamp)
+            dt = datetime.fromtimestamp(entry.timestamp)
             lists.times.append(dt)
             lists.time_labels.append(f"{dt.hour}:{dt.minute}:{dt.second}")
             lists.disk_write.append(entry.disk_write * 0.000001)
