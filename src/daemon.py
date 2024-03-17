@@ -11,6 +11,7 @@ import typing
 from datetime import datetime
 import psutil
 import multiprocessing
+import subprocess
 
 done: bool = False
 
@@ -37,8 +38,7 @@ class DaemonType(Enum):
     CPU = "cpu"
     IDLE = "idle"
     RAM = "ram"
-    WALK = "walk"
-    MULTIWALK = "multiwalk"
+    FIND = "find"
 
 
 # partial function for the cpu daemon
@@ -54,29 +54,21 @@ def cpu() -> None:
 
 
 # simulates grepping for a file by walking the filesystem
-def walk() -> None:
+def find() -> None:
     global done
 
-    results = []
     while not done:
-        for _root, _dirs, files in os.walk("/"):
-            for name in files:
-                results.append(name)
-    print(f"walk daemon found: {results}")  # type: ignore
+        find_process = subprocess.run(
+            [
+                os.environ["ENSEMBLES_FIND_PATH"],
+                os.environ["ENSEMBLES_FIND_SEARCH_PATH"],
+            ],
+            check=False,
+            text=True,
+        )
+        find_result = find_process.stdout
 
-
-def multiwalk_step() -> None:
-    results = []
-    while True:
-        for _root, _dirs, files in os.walk("/"):
-            for name in files:
-                if name == "hello_world.txt":
-                    results.append(name)
-
-
-# multithreaded version of the walk daemon
-def multiwalk() -> None:
-    all_cores(multiwalk_step)
+        print(f"find found: {find_result}")
 
 
 # idle daemon
@@ -119,10 +111,8 @@ def function_for_daemon(daemon_type: DaemonType) -> typing.Callable[..., None]:
             return idle
         case DaemonType.RAM:
             return ram
-        case DaemonType.WALK:
-            return walk
-        case DaemonType.MULTIWALK:
-            return multiwalk
+        case DaemonType.FIND:
+            return find
 
 
 # run a function for the daemon type
