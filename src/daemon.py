@@ -57,7 +57,9 @@ def cpu() -> None:
 def find() -> None:
     global done
 
+    # do it again if it's done
     while not done:
+        # start a process with find
         find_process = subprocess.run(
             [
                 os.environ["ENSEMBLES_FIND_PATH"],
@@ -66,9 +68,8 @@ def find() -> None:
             check=False,
             text=True,
         )
-        find_result = find_process.stdout
-
-        print(f"find found: {find_result}")
+        # wait for process to be done
+        _ = find_process.stdout
 
 
 # idle daemon
