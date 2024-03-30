@@ -39,6 +39,10 @@ class DaemonType(Enum):
     IDLE = "idle"
     RAM = "ram"
     FIND = "find"
+    NETWORK_SEND = "network_send"
+    NETWORK_RECEIVE = "network_receive"
+    READ = "read"
+    WRITE = "write"
 
 
 # partial function for the cpu daemon
@@ -72,11 +76,44 @@ def find() -> None:
         _ = find_process.stdout
 
 
+# reads from disk
+def read() -> None:
+    global done
+
+    filepath: str = os.environ["ENSEMBLES_READ_PATH"]
+
+    with open(filepath, "x") as file:
+        # write 1 mb
+        random_bytes = random.randbytes(100000000)
+        file.write(str(random_bytes))
+
+    # load and read the file
+    while not done:
+        with open(filepath) as file:
+            s = file.read()
+            print(f"read {s.__len__} chars")
+
+
+def write() -> None:
+    # !TODO
+    pass
+
+
 # idle daemon
 def idle() -> None:
     global done
     while not done:
         sleep(1)
+
+
+def network_send() -> None:
+    # !TODO
+    pass
+
+
+def network_receive() -> None:
+    # !TODO
+    pass
 
 
 def ram() -> None:
@@ -114,6 +151,14 @@ def function_for_daemon(daemon_type: DaemonType) -> typing.Callable[..., None]:
             return ram
         case DaemonType.FIND:
             return find
+        case DaemonType.READ:
+            return read
+        case DaemonType.WRITE:
+            return write
+        case DaemonType.NETWORK_RECEIVE:
+            return network_receive
+        case DaemonType.NETWORK_SEND:
+            return network_send
 
 
 # run a function for the daemon type

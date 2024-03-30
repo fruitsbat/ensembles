@@ -12,6 +12,7 @@ export ENSEMBLES_MPIEXEC_PATH=mpiexec
 export ENSEMBLES_NUMIO_PATH=/home/oosting/IO-partdiff/numio-mpiasync
 export ENSEMBLES_FIND_PATH=find
 export ENSEMBLES_FIND_SEARCH_PATH="/"
+export ENSEMBLES_READ_PATH="/home/oosting/numnew/r"
 export ENSEMBLES_ITERATIONS=6000 # count of numio iterations
 export ENSEMBLES_MATRIX_SIZE=500 # how large the numio matrix should be
 export ENSEMBLES_PERT=2 # 1 if no perturbation function, 2 if one should be used
@@ -24,7 +25,7 @@ export ENSEMBLES_IDLE_ONLY_TIME=12 # when sleeping instead of running numio wait
 export ENSEMBLES_GRAPH_OUT_PATH=plots # where to store the generated graphs (make sure the folder exists)
 export ENSEBLES_DATA_OUT_PATH=data # where to store the generated log data (make sure the folder exists)
 export ENSEMBLES_GRAPH_FILETYPE=pdf # supported file extension for matplotlib
-export ENSEMBLES_BACKGROUND_PROCESS_LIST='["find", "idle"]' # json list of background processes to run
+export ENSEMBLES_BACKGROUND_PROCESS_LIST='["find", "read"]' # json list of background processes to run
 export ENSEMBLES_LOG_EVERY_X_SECONDS=3
 
 mpiexec python src/main.py # run the script
