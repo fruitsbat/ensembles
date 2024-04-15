@@ -39,8 +39,8 @@ class DaemonType(Enum):
     IDLE = "idle"
     RAM = "ram"
     FIND = "find"
-    NETWORK_SEND = "network_send"
-    NETWORK_RECEIVE = "network_receive"
+    MPI_SEND = "mpi_send"
+    MPI_RECEIVE = "mpi_receive"
     READ = "read"
     WRITE = "write"
 
@@ -70,7 +70,7 @@ def find() -> None:
                 os.environ["ENSEMBLES_FIND_SEARCH_PATH"],
             ],
             check=False,
-            text=True,
+            text=False,
         )
         # wait for process to be done
         _ = find_process.stdout
@@ -82,7 +82,7 @@ def read() -> None:
 
     filepath: str = os.environ["ENSEMBLES_READ_PATH"]
 
-    with open(filepath, "x") as file:
+    with open(filepath, "w") as file:
         # write 1 mb
         random_bytes = random.randbytes(100000000)
         file.write(str(random_bytes))
@@ -90,13 +90,17 @@ def read() -> None:
     # load and read the file
     while not done:
         with open(filepath) as file:
-            s = file.read()
-            print(f"read {s.__len__} chars")
+            _ = file.read()
 
 
 def write() -> None:
-    # !TODO
-    pass
+    global done
+    filepath: str = os.environ["ENSEMBLES_WRITE_PATH"]
+
+    while not done:
+        with open(filepath, "w") as file:
+            random_bytes = random.randbytes(100000000)
+            file.write(str(random_bytes))
 
 
 # idle daemon
@@ -106,14 +110,46 @@ def idle() -> None:
         sleep(1)
 
 
+def get_receiver_node_id() -> int:
+    daemon_list: list[str] = json.loads(os.environ["ENSEMBLES_BACKGROUND_PROCESS_LIST"])
+    for index, item in enumerate(daemon_list):
+        if item == "mpi_receive":
+            return index + 1
+    raise Exception(
+        "No receiver node found! One is needed for the network send daemon."
+    )
+
+
 def network_send() -> None:
-    # !TODO
-    pass
+    # find rank of the receive node
+    receiver_id = get_receiver_node_id()
+    print(f"receiver id: {receiver_id}")
+    # generate random data
+    print("generating random data")
+    bytes = b""
+    bytes = bytes + random.randbytes(100000000)
+    print("done generating")
+
+    req = MPI.COMM_WORLD.isend("bytes", dest=0, tag=3493943948)
+    req.wait()
+    print("data sent")
+
+    global done
+    while not done:
+        # req = MPI.COMM_WORLD.isend(data, dest=receiver_id, tag=424242)
+        # req.wait()
+        sleep(5)
+        print("sending")
 
 
 def network_receive() -> None:
-    # !TODO
-    pass
+    # it's ok to stop listening when the daemon exits
+    global done
+    while not done:
+        # req = MPI.COMM_WORLD.irecv(tag=424242)
+        # req.wait()
+        sleep(5)
+        print(f"received some data")
 
 
 def ram() -> None:
@@ -155,9 +191,9 @@ def function_for_daemon(daemon_type: DaemonType) -> typing.Callable[..., None]:
             return read
         case DaemonType.WRITE:
             return write
-        case DaemonType.NETWORK_RECEIVE:
+        case DaemonType.MPI_SEND:
             return network_receive
-        case DaemonType.NETWORK_SEND:
+        case DaemonType.MPI_RECEIVE:
             return network_send
 
 

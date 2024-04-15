@@ -12,9 +12,53 @@ def send_done_signals():
     # tell all the background daemons to stop
     for node in range(1, world_size):
         print(f"sending stop signal to node: {node}")
-        comm.send(obj="done", dest=node, tag=200)
-
+        req = comm.isend(obj="done", dest=node, tag=200)
+        req.wait()
     print("sent all done signals")
+
+
+def numio_write_args() -> str:
+    args = f"freq={os.environ['ENSEMBLES_NUMIO_RW_FREQUENCY']},path={os.environ['ENSEMBLES_NUMIO_RW_PATH']}"
+    if bool(os.environ["ENSEMBLES_NUMIO_W_IMMEDIATE"]):
+        args = args + ",imm"
+    elif bool(os.environ["ENSEMBLES_NUMIO_W_NOFILESYNC"]):
+        args = args + ",nofilesync"
+    return args
+
+
+def numio_read_args() -> str:
+    args = f"freq={int(os.environ['ENSEMBLES_NUMIO_RW_FREQUENCY']) + 1},path={os.environ['ENSEMBLES_NUMIO_RW_PATH']}"
+    return args
+
+
+def numio_collective_comms_args() -> str:
+    args = f"freq={os.environ['ENSEMBLES_NUMIO_COLLECTIVE_COM_FREQ']},size={os.environ['ENSEMBLES_NUMIO_COLLECTIVE_COM_FREQ']}"
+    return args
+
+
+def numio_args() -> list[str]:
+    args = [mpiexec_path(), "-n", f"{os.environ['ENSEMBLES_MPIEXEC_NODES']}"]
+    args.append(numio_path())
+
+    if bool(os.environ["ENSEMBLES_NUMIO_WRITE"]):
+        args.append("--write")
+        args.append(numio_write_args())
+
+    if bool(os.environ["ENSEMBLES_NUMIO_READ"]):
+        args.append("--read")
+        args.append(numio_read_args())
+
+    if bool(os.environ["ENSEMBLES_NUMIO_COLLECTIVE_COMMS"]):
+        args.append("--collective-comms")
+        args.append(numio_collective_comms_args())
+
+    if bool(os.environ["ENSEMBLES_NUMIO_FPISIN"]):
+        args.append("--func-fpisin")
+
+    args.append(os.environ["ENSEMBLES_LINES"])
+    args.append(os.environ["ENSEMBLES_ITERATIONS"])
+
+    return args
 
 
 # this is the main job that controls the numio benchmark
@@ -39,22 +83,9 @@ def run_numio() -> None:
         print("idling instead of running numio")
         sleep(int(os.environ["ENSEMBLES_IDLE_ONLY_TIME"]))
         return
-
+    print(numio_args())
     output = subprocess.run(
-        [
-            mpiexec_path(),
-            numio_path(),
-            "-m",
-            f"iter={os.environ['ENSEMBLES_ITERATIONS']},size={os.environ['ENSEMBLES_MATRIX_SIZE']},pert={os.environ['ENSEMBLES_PERT']}",
-            "-w",
-            f"freq={os.environ['ENSEMBLES_RW_FREQUENCY']},path={os.environ['ENSEMBLES_RW_PATH']}",
-            "-r",
-            # make sure this is one more than read
-            # otherwise numio will break
-            f"freq={int(os.environ['ENSEMBLES_RW_FREQUENCY']) + 1},path={os.environ['ENSEMBLES_RW_PATH']}",
-            "-c",
-            f"freq={os.environ['ENSEMBLES_FAKE_COM_FREQ']},size={os.environ['ENSEMBLES_FAKE_COM_SIZE']}",
-        ],
+        numio_args(),
         capture_output=True,
         text=True,
     )
