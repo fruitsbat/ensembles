@@ -10,4 +10,5 @@ dependencies:
   - schedule
   - matplotlib
   - jsonpickle
+  - iperf
 prefix: /home/oosting/anaconda3/envs/ensembles

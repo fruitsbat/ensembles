@@ -12,6 +12,7 @@ from datetime import datetime
 import psutil
 import multiprocessing
 import subprocess
+import socket
 
 done: bool = False
 
@@ -39,8 +40,7 @@ class DaemonType(Enum):
     IDLE = "idle"
     RAM = "ram"
     FIND = "find"
-    MPI_SEND = "mpi_send"
-    MPI_RECEIVE = "mpi_receive"
+    IPERF = "iperf"
     READ = "read"
     WRITE = "write"
 
@@ -123,16 +123,19 @@ def get_receiver_node_id() -> int:
 def network_send() -> None:
     # find rank of the receive node
     receiver_id = get_receiver_node_id()
-    print(f"receiver id: {receiver_id}")
-    # generate random data
-    print("generating random data")
-    bytes = b""
-    bytes = bytes + random.randbytes(100000)
-    print("done generating")
+    # print(f"receiver id: {receiver_id}")
+    # # generate random data
+    # print("generating random data")
+    # bytes = b""
+    # bytes = bytes + random.randbytes(100000)
+    # print("done generating")
 
-    # req = MPI.COMM_WORLD.isend("bytes", dest=0, tag=424242)
-    # req.wait()
-    print("data sent")
+    # # req = MPI.COMM_WORLD.isend("bytes", dest=0, tag=424242)
+    # # req.wait()
+    # print("data sent")
+    server_ip = socket.gethostbyname(socket.gethostname())
+    req = MPI.COMM_WORLD.isend(server_ip, dest=receiver_id, tag=64)
+    req.wait()
 
     global done
     while not done:
@@ -144,13 +147,17 @@ def network_send() -> None:
 
 def network_receive() -> None:
     # it's ok to stop listening when the daemon exits
+    req = MPI.COMM_WORLD.irecv(tag=424242)
+    req.wait()
+
     global done
     while not done:
-        try:
-            req = MPI.COMM_WORLD.irecv(tag=424242)
-            req.wait()
-        except:
-            print("failed receiving data")
+        sleep(5)
+        # try:
+        #     req = MPI.COMM_WORLD.irecv(tag=424242)
+        #     req.wait()
+        # except:
+        #     print("failed receiving data")
 
 
 def ram() -> None:
@@ -168,8 +175,30 @@ def ram() -> None:
             used_ram = psutil.virtual_memory().used
 
 
+def iperf() -> None:
+    global done
+    server_ip = os.environ["ENSEMBLES_IPERF_SERVER_IP"]
+    iperf = os.environ["ENSEMBLES_IPERF_PATH"]
+
+        # do it again if it's done
+    while not done:
+        # start a process with iperf
+        iperf_process = subprocess.run(
+            [
+                iperf,
+                "-c",
+                server_ip,
+            ],
+            check=False,
+            text=False,
+        )
+        # wait for process to be done
+        _ = iperf_process.stdout
+
+
 # what type of daemon is this node?
 def get_daemon_node_type() -> DaemonType:
+
     noderank: int = MPI.COMM_WORLD.Get_rank()
     daemon_list: list[str] = json.loads(os.environ["ENSEMBLES_BACKGROUND_PROCESS_LIST"])
     name = daemon_list[(noderank - 1) % len(daemon_list)]
@@ -192,10 +221,8 @@ def function_for_daemon(daemon_type: DaemonType) -> typing.Callable[..., None]:
             return read
         case DaemonType.WRITE:
             return write
-        case DaemonType.MPI_SEND:
-            return network_receive
-        case DaemonType.MPI_RECEIVE:
-            return network_send
+        case DaemonType.IPERF:
+            return iperf
 
 
 # run a function for the daemon type
