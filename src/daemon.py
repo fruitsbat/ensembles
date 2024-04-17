@@ -189,7 +189,7 @@ def iperf() -> None:
                 "-c",
                 server_ip,
                 "-p",
-                
+                os.environ["ENSEMBLES_IPERF_PORT"]
             ],
             check=False,
             text=False,
