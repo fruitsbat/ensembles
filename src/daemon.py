@@ -188,6 +188,8 @@ def iperf() -> None:
                 iperf,
                 "-c",
                 server_ip,
+                "-p",
+                
             ],
             check=False,
             text=False,

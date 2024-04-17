@@ -45,6 +45,7 @@ export ENSEMBLES_BACKGROUND_PROCESS_LIST='["iperf"]' # json list of background p
 export ENSEMBLES_LOG_EVERY_X_SECONDS=3
 export ENSEMBLES_IPERF_PATH="iperf3"
 export ENSEMBLES_IPERF_SERVER_IP="136.172.61.247"
+export ENSEMBLES_IPERF_PORT=5201
 
 
 mpiexec python src/main.py # run the script
