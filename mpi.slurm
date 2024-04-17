@@ -20,7 +20,7 @@ export ENSEMBLES_NUMIO_W_NOFILESYNC=False
 export ENSEMBLES_NUMIO_W_IMMEDIATE=False # can't be activee at the same time as nofilesync
 export ENSEMBLES_NUMIO_FPISIN=True
 export ENSEMBLES_NUMIO_FILE_PER_PROCESS=True
-export ENSEMBLES_ITERATIONS=90000 # count of numio iterations
+export ENSEMBLES_ITERATIONS=9000 # count of numio iterations
 export ENSEMBLES_LINES=500 # how large the numio matrix should be |lines| = |columns|
 export ENSEMBLES_PERT=True # use the sinus perturbation function
 export ENSEMBLES_NUMIO_WRITE=True

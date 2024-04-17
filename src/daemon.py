@@ -127,11 +127,11 @@ def network_send() -> None:
     # generate random data
     print("generating random data")
     bytes = b""
-    bytes = bytes + random.randbytes(100000000)
+    bytes = bytes + random.randbytes(100000)
     print("done generating")
 
-    req = MPI.COMM_WORLD.isend("bytes", dest=0, tag=3493943948)
-    req.wait()
+    # req = MPI.COMM_WORLD.isend("bytes", dest=0, tag=424242)
+    # req.wait()
     print("data sent")
 
     global done
@@ -146,10 +146,11 @@ def network_receive() -> None:
     # it's ok to stop listening when the daemon exits
     global done
     while not done:
-        # req = MPI.COMM_WORLD.irecv(tag=424242)
-        # req.wait()
-        sleep(5)
-        print(f"received some data")
+        try:
+            req = MPI.COMM_WORLD.irecv(tag=424242)
+            req.wait()
+        except:
+            print("failed receiving data")
 
 
 def ram() -> None:
