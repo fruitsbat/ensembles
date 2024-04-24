@@ -186,7 +186,7 @@ class Log:
         jsonified_list_data = jsonpickle.encode(self.entries)  # type: ignore
         json_string = f'{"{"}"time_started": {self.beginning_timestamp}, "job_type": "{job_type}", "entries": {jsonified_list_data} {"}"}'
         with open(
-            f"{os.environ['ENSEBLES_DATA_OUT_PATH']}/{datetime.now().isoformat()}-id{slurm.slurm_localid()}.json",
+            f"{os.environ['ENSEMBLES_DATA_OUT_PATH']}/{datetime.now().isoformat()}-id{slurm.slurm_localid()}.json",
             "x",
         ) as file:
             file.write(json_string)
